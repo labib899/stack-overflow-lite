@@ -20,10 +20,10 @@ def create_post(post:Post,current_user: User = Depends(oauth2.get_current_user))
     db.posts.insert_one(post_data)
 
     notification_data = {
-        'user_id': current_user['_id'], 
-        'post_id': post_data['_id'], 
+        'user_id': str(current_user['_id']), 
+        'post_id': str(post_data['_id']), 
         'message': f'{current_user['email']} posted: {post.title}',  
-        'created_at': datetime.utcnow()  
+        'created_at': datetime.utcnow().isoformat()  
     }
     db.notifications.insert_one(notification_data)
 
@@ -38,10 +38,12 @@ def get_single_post(post_id,current_user: User = Depends(oauth2.get_current_user
         raise HTTPException(status_code=400, detail="Invalid blog id format")
 
     post = db.posts.find_one({'_id': ObjectId(post_id)})
+    print(post_id)
     if post is None:
         raise HTTPException(status_code=404, detail="post not found")
     
-    post['_id']=str(post['_id'])
+    post['id']=str(post['_id'])
+    post['user_id']=str(post['user_id'])
     
     return post
 
@@ -52,7 +54,8 @@ def get_all_posts(current_user: User = Depends(oauth2.get_current_user)):
     posts = db.posts.find({"user_id": {"$ne": current_user["_id"]}})
     posts_list = []
     for post in posts:
-        post["_id"] = str(post["_id"])  
+        post["id"] = str(post["_id"])  
+        post['user_id'] = str(post['user_id'])
         posts_list.append(post)
 
     return posts_list

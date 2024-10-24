@@ -14,6 +14,7 @@ def signup(user:User):
     if db.users.find_one({"email": user.email}):
         raise HTTPException(status_code=400, detail="User already exists")
     
+    user['id']=str(user['_id'])
     user.password=Hash.bcrypt(user.password)
     db.users.insert_one(user.dict())
 

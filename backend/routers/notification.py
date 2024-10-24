@@ -31,7 +31,7 @@ def get_notifications(current_user: User = Depends(oauth2.get_current_user)):
     notifications = db.notifications.find({"user_id": {"$ne": current_user['_id']}})
     notifications_list = []
     for notification in notifications:
-        notification['_id'] = str(notification["_id"]) 
+        notification['id'] = str(notification["_id"]) 
         notification['user_id'] = str(notification['user_id'])
         notification['post_id'] = str(notification['post_id'])
         notification['created_at'] = str(notification['created_at'])

@@ -36,6 +36,12 @@ const NavBar = () => {
     document.getElementById("my_modal_2").showModal(); // Show modal after fetching notifications
   };
 
+  console.log(notifications);
+
+  const handleRedirect = (id) => {
+    navigate(`/post-details/${id}`);
+  };
+
   return (
     <nav className="bg-white shadow-md py-4 px-6 mb-8 flex justify-between items-center">
       <div className="text-xl font-semibold text-gray-800">
@@ -61,9 +67,9 @@ const NavBar = () => {
                 <ul>
                   {notifications.length > 0 ? (
                     notifications.map((notification) => (
-                      <li key={notification._id} className="py-2 border-b">
+                      <button onClick={() => handleRedirect(notification.post_id)} key={notification._id} className="py-2 border-b">
                         <p className="font-semibold">{notification.message}</p>
-                      </li>
+                      </button>
                     ))
                   ) : (
                     <p>No notifications to display</p>
