@@ -13,6 +13,17 @@ router = APIRouter(tags=['Posts'])
 
 
 
+
+language_extension_map = {
+    "Python": "py",
+    "Javascript": "js",
+    "C++": "cpp",
+    "C": "c",
+    "Java": "java",
+}
+
+
+
 @router.post('/posts')
 def create_post(post: Post, current_user: User = Depends(oauth2.get_current_user)):
     post_data = post.dict(exclude={'code_snippet'})
@@ -20,9 +31,13 @@ def create_post(post: Post, current_user: User = Depends(oauth2.get_current_user
     result = db.posts.insert_one(post_data)
     post_id = result.inserted_id
 
+    print(post.language)
+
+    extension = language_extension_map.get(post.language, "txt")
+
     if post.code_snippet:
         snippet_data = post.code_snippet.encode('utf-8')
-        snippet_filename = f"snippets/{post_id}.txt"
+        snippet_filename = f"snippets/{post_id}.{extension}"
         
         minio_client.put_object(
             BUCKET_NAME, 
