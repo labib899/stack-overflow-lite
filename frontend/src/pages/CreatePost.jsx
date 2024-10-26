@@ -5,24 +5,32 @@ import axios from 'axios';
 const CreatePost = () => {
     const [title, setTitle] = useState('');
     const [content, setContent] = useState('');
+    const [codeSnippet, setCodeSnippet] = useState(''); 
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError('');  
-        setSuccess(''); 
+        setError('');
+        setSuccess('');
 
         try {
             const token = localStorage.getItem('token');
+            // const userID = localStorage.getItem('user_id'); // or whatever key you're using
+            const postData = {   
+                title: title,
+                content: content,
+                user_id: 'userID', 
+            };
+
+            if (codeSnippet) {
+                postData.code_snippet = codeSnippet; 
+            }
+            console.log(postData)
             const response = await axios.post(
                 'http://localhost:8000/posts', 
-                {
-                    title: title,
-                    content: content,
-                    user_id: 'string'
-                },
+                postData,
                 {
                     headers: {
                         Authorization: `Bearer ${token}`,
@@ -34,11 +42,12 @@ const CreatePost = () => {
                 setSuccess('Post created successfully!');
                 setTitle('');
                 setContent('');
+                setCodeSnippet('');  
                 setTimeout(() => navigate('/home'), 1500);  
             }
         } catch (err) {
             setError('Failed to create post. Please try again.');
-            console.log(err)
+            console.error(err.response ? err.response.data : err); 
         }
     };
 
@@ -76,6 +85,20 @@ const CreatePost = () => {
                             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                             rows="4"
                             required
+                        ></textarea>
+                    </div>
+
+                    <div>
+                        <label htmlFor="codeSnippet" className="block text-sm font-medium text-gray-700">
+                            Code Snippet (Optional)
+                        </label>
+                        <textarea
+                            id="codeSnippet"
+                            value={codeSnippet}
+                            onChange={(e) => setCodeSnippet(e.target.value)}
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm h-48"
+                            rows="4"
+                            placeholder="Enter code snippet here (optional)"
                         ></textarea>
                     </div>
 

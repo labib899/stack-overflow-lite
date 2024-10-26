@@ -33,10 +33,8 @@ const NavBar = () => {
     } catch (err) {
       setError('Failed to load notifications');
     }
-    document.getElementById("my_modal_2").showModal(); // Show modal after fetching notifications
+    document.getElementById("my_modal_2").showModal(); 
   };
-
-  console.log(notifications);
 
   const handleRedirect = (id) => {
     navigate(`/post-details/${id}`);
@@ -67,9 +65,11 @@ const NavBar = () => {
                 <ul>
                   {notifications.length > 0 ? (
                     notifications.map((notification) => (
+                      <li>
                       <button onClick={() => handleRedirect(notification.post_id)} key={notification._id} className="py-2 border-b">
                         <p className="font-semibold">{notification.message}</p>
                       </button>
+                      </li>
                     ))
                   ) : (
                     <p>No notifications to display</p>

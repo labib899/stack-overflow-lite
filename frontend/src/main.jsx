@@ -5,13 +5,16 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-import Root from './root';
 
+
+import Root from './Root';
 import Home from './pages/Home'
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp'
 import CreatePost from './pages/CreatePost';
 import PostDetails from './pages/PostDetails';
+
+
 
 const router = createBrowserRouter([
   {
@@ -37,10 +40,12 @@ const router = createBrowserRouter([
     path: "/signin",
     element: <SignIn />,
   },
+
   {
     path: "/signup",
     element: <SignUp />,
   },
+  
 ]);
 
 createRoot(document.getElementById('root')).render(

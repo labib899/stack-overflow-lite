@@ -5,23 +5,27 @@ from pydantic import BaseModel
 
 
 class Post(BaseModel):
-    id: str
+    id: Optional[str] = None
     title: str
     content: str
+    code_snippet: Optional[str] = None
     user_id: str
+    code_snippet_url: Optional[str] = None
 
 
 class ShowPost(BaseModel):
-    id: str
+    id: Optional[str] = None
     title: str
     content: str
+    code_snippet: Optional[str] = None
     user_id: str
+    code_snippet_url: Optional[str] = None
 
-    class Config:
-        # This allows us to use the ObjectId as a string in the response
-        json_encoders = {
-            ObjectId: str  # Convert ObjectId to string automatically
-        }
+    # class Config:
+    #     # This allows us to use the ObjectId as a string in the response
+    #     json_encoders = {
+    #         ObjectId: str  # Convert ObjectId to string automatically
+    #     }
 
 
 class User(BaseModel):

@@ -1,34 +1,50 @@
+import io
 from datetime import datetime
 from typing import List
 from bson import ObjectId
 from fastapi import APIRouter, HTTPException, Depends
-
 from models import Post, ShowPost, User
 from database import db
 import oauth2
+from _minio import minio_client, BUCKET_NAME
 
 
-
-router=APIRouter(tags=['Posts'])
+router = APIRouter(tags=['Posts'])
 
 
 
 @router.post('/posts')
-def create_post(post:Post,current_user: User = Depends(oauth2.get_current_user)):
-    post_data=post.dict()
-    post_data['user_id']=current_user['_id']
-    db.posts.insert_one(post_data)
+def create_post(post: Post, current_user: User = Depends(oauth2.get_current_user)):
+    post_data = post.dict()
+    post_data['user_id'] = current_user['_id']
+    result = db.posts.insert_one(post_data)
+    post_id = result.inserted_id
+
+    if post.code_snippet:
+        snippet_data = post.code_snippet.encode('utf-8')
+        snippet_filename = f"snippets/{post_id}"
+        
+        minio_client.put_object(
+            BUCKET_NAME, 
+            snippet_filename, 
+            io.BytesIO(snippet_data), 
+            length=len(snippet_data), 
+            content_type="text/plain"
+        )
+
+        minio_url = f"http://localhost:9000/{BUCKET_NAME}/{snippet_filename}"
+        post.code_snippet_url=minio_url
+        db.posts.update_one({'_id': post_id}, {'$set': {'code_snippet_url': minio_url}})
 
     notification_data = {
-        'user_id': str(current_user['_id']), 
-        'post_id': str(post_data['_id']), 
-        'message': f'{current_user['email']} posted: {post.title}',  
-        'created_at': datetime.utcnow().isoformat()  
+        'user_id': current_user['_id'],
+        'post_id': str(post_id),
+        'message': f"{current_user['email']} posted: {post.title}",
+        'created_at': datetime.utcnow().isoformat()
     }
     db.notifications.insert_one(notification_data)
 
     return post
-
 
 
 
@@ -38,7 +54,6 @@ def get_single_post(post_id,current_user: User = Depends(oauth2.get_current_user
         raise HTTPException(status_code=400, detail="Invalid blog id format")
 
     post = db.posts.find_one({'_id': ObjectId(post_id)})
-    print(post_id)
     if post is None:
         raise HTTPException(status_code=404, detail="post not found")
     
@@ -54,7 +69,7 @@ def get_all_posts(current_user: User = Depends(oauth2.get_current_user)):
     posts = db.posts.find({"user_id": {"$ne": current_user["_id"]}})
     posts_list = []
     for post in posts:
-        post["id"] = str(post["_id"])  
+        post['id'] = str(post['_id'])  
         post['user_id'] = str(post['user_id'])
         posts_list.append(post)
 

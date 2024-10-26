@@ -6,3 +6,4 @@ python-jose
 apscheduler
 python-multipart
 pyjwt
+minio

@@ -33,15 +33,9 @@ const Home = () => {
     fetchPosts();
   }, []);
 
-  console.log(posts)
-
   return (
     <div className="min-h-screen bg-gray-100">
-      <header className="text-center mb-6">
-        {/* <h1 className="text-4xl font-bold text-gray-800">
-          Welcome to the Home Page
-        </h1> */}
-      </header>
+      <header className="text-center mb-6"></header>
 
       {loading ? (
         <p className="text-center text-gray-600">Loading posts...</p>
@@ -54,7 +48,22 @@ const Home = () => {
               <div key={post.id} className="bg-white p-6 rounded-lg shadow-lg">
                 <h3 className="text-xl font-semibold mb-2">{post.title}</h3>
                 <p className="text-gray-700">{post.content}</p>
-                <button onClick={() => handleRedirect(post.id)}>Show details</button>
+                {post.code_snippet_url && (
+                  <a 
+                    href={post.code_snippet_url} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="text-blue-500 block"
+                  >
+                    View Code Snippet
+                  </a>
+                )}
+                <button 
+                  onClick={() => handleRedirect(post.id)} 
+                  className="font-bold block"
+                >
+                  Show details
+                </button>
               </div>
             ))
           ) : (
