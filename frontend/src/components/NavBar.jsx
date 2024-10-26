@@ -1,15 +1,25 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import { FaRegBell } from "react-icons/fa";
 import { FaSignOutAlt } from "react-icons/fa";
+import { FaHome } from "react-icons/fa";
 
 
 const NavBar = () => {
   const [notifications, setNotifications] = useState([]);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+
+
+  const [userEmail, setUserEmail] = useState("");
+  useEffect(() => {
+    const storedUserEmail = localStorage.getItem("userEmail");
+    if (storedUserEmail) {
+      setUserEmail(storedUserEmail);
+    }
+  }, []);
 
   const handleCreatePost = () => {
     navigate("/create-post");
@@ -40,12 +50,30 @@ const NavBar = () => {
     navigate(`/post-details/${id}`);
   };
 
+  const handleHome = () => {
+    navigate("/home");
+  };
+
   return (
     <nav className="bg-white shadow-md py-4 px-6 mb-8 flex justify-between items-center">
       <div className="text-xl font-semibold text-gray-800">
         <img className="w-36" src="/sologo.png"></img>
       </div>
+
+      
       <div className="space-x-4">
+
+        {/* Display the user email */}
+        <span className="text-gray-800 font-semibold">{userEmail}</span>
+
+        {/* Home Button */}
+        <button
+          onClick={handleHome}
+          className="btn btn-ghost"
+        >
+          <FaHome />
+        </button>
+
         {/* Notifications Button */}
         <button
           className="btn btn-ghost"

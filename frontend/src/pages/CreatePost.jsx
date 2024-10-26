@@ -17,17 +17,17 @@ const CreatePost = () => {
 
         try {
             const token = localStorage.getItem('token');
-            // const userID = localStorage.getItem('user_id'); // or whatever key you're using
+            const userID = localStorage.getItem('user_id');
             const postData = {   
                 title: title,
-                content: content,
-                user_id: 'userID', 
+                content: content, 
+                codeSnippet: codeSnippet,
+                user_id: String(userID),
             };
 
             if (codeSnippet) {
                 postData.code_snippet = codeSnippet; 
             }
-            console.log(postData)
             const response = await axios.post(
                 'http://localhost:8000/posts', 
                 postData,

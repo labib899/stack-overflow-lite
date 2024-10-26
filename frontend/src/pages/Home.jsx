@@ -21,7 +21,27 @@ const Home = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-        setPosts(response.data);
+
+        const postsWithSnippets = await Promise.all(
+          response.data.map(async (post) => {
+            if (post.code_snippet_url) {
+              try {
+                const snippetResponse = await axios.get(post.code_snippet_url, {
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                  },
+                });
+                post.code_snippet_content = snippetResponse.data; // Add snippet content directly to post
+              } catch (error) {
+                console.error("Failed to fetch code snippet:", error);
+                post.code_snippet_content = "Failed to load code snippet.";
+              }
+            }
+            return post;
+          })
+        );
+
+        setPosts(postsWithSnippets);
       } catch (err) {
         console.error(err);
         setError("Failed to load posts");
@@ -48,21 +68,21 @@ const Home = () => {
               <div key={post.id} className="bg-white p-6 rounded-lg shadow-lg">
                 <h3 className="text-xl font-semibold mb-2">{post.title}</h3>
                 <p className="text-gray-700">{post.content}</p>
-                {post.code_snippet_url && (
-                  <a 
-                    href={post.code_snippet_url} 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    className="text-blue-500 block"
-                  >
-                    View Code Snippet
-                  </a>
+
+                {post.code_snippet_content && (
+                  <div>
+                    <p className="text-gray-700 mt-4 mb-2">Code Snippet:</p>
+                    <pre className="bg-gray-100 p-4 rounded-lg whitespace-pre-wrap text-gray-800">
+                      {post.code_snippet_content}
+                    </pre>
+                  </div>
                 )}
+
                 <button 
                   onClick={() => handleRedirect(post.id)} 
-                  className="font-bold block"
+                  className="font-bold text-blue-400 block mt-4"
                 >
-                  Show details
+                  View Post
                 </button>
               </div>
             ))

@@ -15,14 +15,14 @@ router = APIRouter(tags=['Posts'])
 
 @router.post('/posts')
 def create_post(post: Post, current_user: User = Depends(oauth2.get_current_user)):
-    post_data = post.dict()
+    post_data = post.dict(exclude={'code_snippet'})
     post_data['user_id'] = current_user['_id']
     result = db.posts.insert_one(post_data)
     post_id = result.inserted_id
 
     if post.code_snippet:
         snippet_data = post.code_snippet.encode('utf-8')
-        snippet_filename = f"snippets/{post_id}"
+        snippet_filename = f"snippets/{post_id}.txt"
         
         minio_client.put_object(
             BUCKET_NAME, 

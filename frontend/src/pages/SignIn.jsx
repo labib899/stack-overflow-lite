@@ -22,6 +22,7 @@ const SignIn = () => {
         if (response.ok) {
             const data = await response.json();
             localStorage.setItem('token', data.access_token);
+            localStorage.setItem('userEmail', email);
             alert('Signed in successfully!');
             navigate('/home'); 
         } else {
