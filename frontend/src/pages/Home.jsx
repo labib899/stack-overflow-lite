@@ -51,6 +51,10 @@ const Home = () => {
     };
 
     fetchPosts();
+
+    const interval = setInterval(fetchPosts, 5000); 
+    return () => clearInterval(interval);
+
   }, []);
 
   return (

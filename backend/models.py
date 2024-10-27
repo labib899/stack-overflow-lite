@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 from bson import ObjectId
 from pydantic import BaseModel
 
@@ -36,19 +36,23 @@ class ShowUser(BaseModel):
 
 
 class Notification(BaseModel):
-    id: str
+    id: Optional[str] = None
     message: str
     post_id: str
     user_id: str
     created_at: str
+    seen_id: List[str] = []
+    expired: bool = False
 
 
 class ShowNotification(BaseModel):
-    id: str
+    id: Optional[str] =None
     message: str
     post_id: str
     user_id: str
     created_at: str
+    seen_id: List[str] = []
+    expired: bool = False
 
 
 class Login(BaseModel):

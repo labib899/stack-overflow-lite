@@ -3,7 +3,7 @@ from datetime import datetime
 from typing import List
 from bson import ObjectId
 from fastapi import APIRouter, HTTPException, Depends
-from models import Post, ShowPost, User
+from models import Post, ShowPost, User, Notification
 from database import db
 import oauth2
 from _minio import minio_client, BUCKET_NAME
@@ -31,10 +31,7 @@ def create_post(post: Post, current_user: User = Depends(oauth2.get_current_user
     result = db.posts.insert_one(post_data)
     post_id = result.inserted_id
 
-    print(post.language)
-
     extension = language_extension_map.get(post.language, "txt")
-
     if post.code_snippet:
         snippet_data = post.code_snippet.encode('utf-8')
         snippet_filename = f"snippets/{post_id}.{extension}"
@@ -52,12 +49,18 @@ def create_post(post: Post, current_user: User = Depends(oauth2.get_current_user
         db.posts.update_one({'_id': post_id}, {'$set': {'code_snippet_url': minio_url}})
 
     notification_data = {
-        'user_id': current_user['_id'],
+        'user_id': str(current_user['_id']),
         'post_id': str(post_id),
         'message': f"{current_user['email']} posted: {post.title}",
-        'created_at': datetime.utcnow().isoformat()
+        'created_at': datetime.utcnow().isoformat(),
+        'seen_id': [],
+        'expired': False
     }
-    db.notifications.insert_one(notification_data)
+    result = db.notifications.insert_one(notification_data)
+    db.notifications.update_one(
+        {'_id': result.inserted_id},  
+        {'$set': {'id': str(result.inserted_id)}} 
+    )
 
     return post
 
