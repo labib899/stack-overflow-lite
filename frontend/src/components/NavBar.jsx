@@ -6,19 +6,21 @@ import { FaRegBell } from "react-icons/fa";
 import { FaSignOutAlt } from "react-icons/fa";
 import { FaHome } from "react-icons/fa";
 
-
 const NavBar = () => {
   const [notifications, setNotifications] = useState([]);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-
   const [userEmail, setUserEmail] = useState("");
+  const [currentUserId, setCurrentUserId] = useState("");
+
   useEffect(() => {
     const storedUserEmail = localStorage.getItem("userEmail");
-    if (storedUserEmail) {
-      setUserEmail(storedUserEmail);
-    }
+    if (storedUserEmail) setUserEmail(storedUserEmail);
+
+    const currentUserId = localStorage.getItem('userId');
+    if (currentUserId) setCurrentUserId(currentUserId);
+
   }, []);
 
   const handleCreatePost = () => {
@@ -27,27 +29,52 @@ const NavBar = () => {
 
   const handleSignOut = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("userId");
     navigate("/signin");
   };
 
   // Fetch notifications when the modal is opened
   const handleNotifications = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:8000/notifications', {
+      const token = localStorage.getItem("token");
+      const response = await axios.get("http://localhost:8000/notifications", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       setNotifications(response.data);
     } catch (err) {
-      setError('Failed to load notifications');
+      setError("Failed to load notifications");
     }
-    document.getElementById("my_modal_2").showModal(); 
+    document.getElementById("my_modal_2").showModal();
   };
 
-  const handleRedirect = (id) => {
-    navigate(`/post-details/${id}`);
+  const handleRedirect = async (notification) => {
+    try {
+      const token = localStorage.getItem("token");
+      await axios.put(
+        `http://localhost:8000/notifications/${notification.id}/mark-as-read`,
+        {userId: currentUserId},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+       // Update local notifications state to reflect the seen status
+       setNotifications((prevNotifications) =>
+        prevNotifications.map((notif) =>
+          notif.id === notification.id
+            ? { ...notif, seen_id: [...notif.seen_id, currentUserId] } // Add userId to seen_id
+            : notif
+        )
+      );
+      // Navigate to the post after marking as read
+      navigate(`/post-details/${notification.post_id}`);
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
+    }
   };
 
   const handleHome = () => {
@@ -60,25 +87,17 @@ const NavBar = () => {
         <img className="w-36" src="/sologo.png"></img>
       </div>
 
-      
       <div className="space-x-4">
-
         {/* Display the user email */}
         <span className="text-gray-800 font-semibold">{userEmail}</span>
 
         {/* Home Button */}
-        <button
-          onClick={handleHome}
-          className="btn btn-ghost"
-        >
+        <button onClick={handleHome} className="btn btn-ghost">
           <FaHome />
         </button>
 
         {/* Notifications Button */}
-        <button
-          className="btn btn-ghost"
-          onClick={handleNotifications}
-        >
+        <button className="btn btn-ghost" onClick={handleNotifications}>
           <FaRegBell />
         </button>
 
@@ -93,10 +112,17 @@ const NavBar = () => {
                 <ul>
                   {notifications.length > 0 ? (
                     notifications.map((notification) => (
-                      <li>
-                      <button onClick={() => handleRedirect(notification.post_id)} key={notification._id} className="py-2 border-b">
-                        <p className="font-semibold">{notification.message}</p>
-                      </button>
+                      <li key={notification.id}>
+                        <button
+                          onClick={() => handleRedirect(notification)}
+                          className={`py-2 border-b ${
+                            notification.seen_id.includes(currentUserId)
+                              ? "text-gray-500" 
+                              : "font-semibold text-black" 
+                          }`}
+                        >
+                          <p>{notification.message}</p>
+                        </button>
                       </li>
                     ))
                   ) : (
@@ -120,10 +146,7 @@ const NavBar = () => {
         </button>
 
         {/* Sign Out Button */}
-        <button
-          onClick={handleSignOut}
-          className="btn"
-        >
+        <button onClick={handleSignOut} className="btn">
           <FaSignOutAlt />
         </button>
       </div>

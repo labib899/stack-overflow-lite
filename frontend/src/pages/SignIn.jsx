@@ -23,6 +23,7 @@ const SignIn = () => {
             const data = await response.json();
             localStorage.setItem('token', data.access_token);
             localStorage.setItem('userEmail', email);
+            localStorage.setItem('userId', data.user_id);
             alert('Signed in successfully!');
             navigate('/home'); 
         } else {

@@ -26,19 +26,6 @@ def create_notification(notification: Notification,current_user: User = Depends(
    
 
 
-# @router.get("/notifications", response_model=List[ShowNotification])
-# def get_notifications(current_user: User = Depends(oauth2.get_current_user)):
-#     notifications = db.notifications.find({"user_id": {"$ne": current_user['_id']}})
-#     notifications_list = []
-#     for notification in notifications:
-#         notification['id'] = str(notification["_id"]) 
-#         notification['user_id'] = str(notification['user_id'])
-#         notification['post_id'] = str(notification['post_id'])
-#         notification['created_at'] = str(notification['created_at'])
-#         notifications_list.append(notification)
-
-#     return notifications_list
-
 
 
 
@@ -60,3 +47,17 @@ def get_notifications(current_user: User = Depends(oauth2.get_current_user)):
         notification_list.append(notification)
         
     return notification_list
+
+
+
+
+@router.put('/notifications/{notification_id}/mark-as-read')
+def mark_as_read(notification_id, current_user: User = Depends(oauth2.get_current_user)):
+    user_id_str = str(current_user["_id"])
+
+    db.notifications.update_one(
+        {'_id': ObjectId(notification_id)},
+        {'$addToSet': {'seen_id': user_id_str}}
+    )
+
+    return {"message": "Notification marked as read"}
