@@ -25,7 +25,7 @@ const SignIn = () => {
             localStorage.setItem('userEmail', email);
             localStorage.setItem('userId', data.user_id);
             alert('Signed in successfully!');
-            navigate('/home'); 
+            navigate('/'); 
         } else {
             alert('Sign-in failed. Please check your credentials.');
         }

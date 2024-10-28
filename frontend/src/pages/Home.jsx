@@ -37,6 +37,23 @@ const Home = () => {
                 post.code_snippet_content = "Failed to load code snippet.";
               }
             }
+
+            // Fetch author details
+            try {
+              const userResponse = await axios.get(
+                `http://localhost:8000/users/${post.user_id}`,
+                {
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                  },
+                }
+              );
+              post.author = userResponse.data;
+            } catch (error) {
+              console.error("Failed to fetch author details:", error);
+              post.author = { username: "Unknown User" };
+            }
+
             return post;
           })
         );
@@ -52,13 +69,9 @@ const Home = () => {
 
     fetchPosts();
 
-    const interval = setInterval(fetchPosts, 5000); 
+    const interval = setInterval(fetchPosts, 5000);
     return () => clearInterval(interval);
-
   }, []);
-
-
-  
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -73,20 +86,26 @@ const Home = () => {
           {posts.length > 0 ? (
             posts.map((post) => (
               <div key={post.id} className="bg-white p-6 rounded-lg shadow-lg">
+                {/* Display the author's email */}
+                {post.author && (
+                  <p className="text-gray-500 mt-2">
+                    Posted by: <span className="font-semibold">{post.author.email}</span>
+                  </p>
+                )}
                 <h3 className="text-xl font-semibold mb-2">{post.title}</h3>
                 <p className="text-gray-700">{post.content}</p>
 
                 {post.code_snippet_content && (
                   <div>
                     <p className="text-gray-700 mt-4 mb-2">Code Snippet:</p>
-                    <pre className="bg-gray-100 p-4 rounded-lg whitespace-pre-wrap text-gray-800">
+                    {/* <pre className="bg-gray-100 p-4 rounded-lg whitespace-pre-wrap text-gray-800">
                       {post.code_snippet_content}
-                    </pre>
+                    </pre> */}
                   </div>
                 )}
 
-                <button 
-                  onClick={() => handleRedirect(post.id)} 
+                <button
+                  onClick={() => handleRedirect(post.id)}
                   className="font-bold text-blue-400 block mt-4"
                 >
                   View Post

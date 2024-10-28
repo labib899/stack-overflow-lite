@@ -28,6 +28,7 @@ language_extension_map = {
 def create_post(post: Post, current_user: User = Depends(oauth2.get_current_user)):
     post_data = post.dict(exclude={'code_snippet'})
     post_data['user_id'] = current_user['_id']
+    # post_data['created_at'] = datetime.utcnow().isoformat()
     result = db.posts.insert_one(post_data)
     post_id = result.inserted_id
 
@@ -82,13 +83,17 @@ def get_single_post(post_id,current_user: User = Depends(oauth2.get_current_user
 
 
 
-@router.get('/posts',response_model=List[ShowPost])
+
+
+@router.get('/posts', response_model=List[ShowPost])
 def get_all_posts(current_user: User = Depends(oauth2.get_current_user)):
-    posts = db.posts.find({"user_id": {"$ne": current_user["_id"]}})
+    posts = db.posts.find({"user_id": {"$ne": current_user["_id"]}}).sort("_id", -1)
+    
     posts_list = []
     for post in posts:
-        post['id'] = str(post['_id'])  
+        post['id'] = str(post['_id'])
         post['user_id'] = str(post['user_id'])
         posts_list.append(post)
 
     return posts_list
+

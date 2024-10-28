@@ -15,16 +15,26 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: (
-      <ProtectedRoute>
-        <Root />
-      </ProtectedRoute>
+      <Root />
     ),
     children: [
-      { path: "/home", element: <Home /> },
+      { path: "/", element: 
+          <ProtectedRoute>
+            <Home />
+          </ProtectedRoute>
+      },
 
-      { path: "/create-post", element: <CreatePost /> },
+      { path: "/create-post", element: 
+        <ProtectedRoute>
+          <CreatePost />
+        </ProtectedRoute>
+       },
 
-      { path: "/post-details/:id", element: <PostDetails /> },
+      { path: "/post-details/:id", element: 
+        <ProtectedRoute>
+          <PostDetails />
+        </ProtectedRoute>
+       },
     ],
   },
 

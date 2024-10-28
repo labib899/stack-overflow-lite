@@ -109,7 +109,7 @@ const NavBar = () => {
   };
 
   const handleHome = () => {
-    navigate("/home");
+    navigate("/");
   };
 
   return (

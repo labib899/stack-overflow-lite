@@ -46,7 +46,7 @@ const CreatePost = () => {
         setContent("");
         setCodeSnippet("");
         setLanguage("");
-        setTimeout(() => navigate("/home"), 1500);
+        setTimeout(() => navigate("/"), 1500);
       }
     } catch (err) {
       setError("Failed to create post. Please try again.");

@@ -27,7 +27,7 @@ const SignUp = () => {
 
         if (response.ok) {
             alert('Signed up successfully!');
-            navigate('/home');
+            navigate('/');
         } else {
             alert('User already exists');
         }
