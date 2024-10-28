@@ -39,7 +39,7 @@ const NavBar = () => {
 
         if (response.data.length > 0) {
           const newLastNotificationId =
-            response.data[response.data.length - 1].id; 
+            response.data[0].id; 
 
           if (
             lastNotificationId.current &&

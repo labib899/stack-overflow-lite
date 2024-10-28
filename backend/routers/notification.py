@@ -36,11 +36,10 @@ def get_notifications(current_user: User = Depends(oauth2.get_current_user)):
     notifications = db.notifications.find({
         'user_id': {'$ne': user_id_str},
         '$or': [
-            {'seen_id': {'$ne': user_id_str}},  # Not seen by user
-            {'seen_id': user_id_str, 'expired': False},  # Seen but not expired
-            {'seen_id': user_id_str, 'expired': True}  # Seen, expired, but show only once
+            {'seen_id': {'$ne': user_id_str}},
+            {'seen_id': user_id_str, 'expired': False}
         ]
-    })
+    }).sort('created_at', -1)
     
     notification_list = []
     for notification in notifications:

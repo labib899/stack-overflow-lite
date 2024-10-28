@@ -3,6 +3,7 @@ import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
 
 from routers import post, user, notification, auth
+from remover import scheduler
 
 
 
@@ -33,6 +34,17 @@ app.include_router(notification.router)
 
 
 
+
+# Start the scheduler when the app starts
+@app.on_event("startup")
+def start_scheduler():
+    scheduler.start()  # Start the scheduler
+
+@app.on_event("shutdown")
+def shutdown_event():
+    scheduler.shutdown()  # Shutdown the scheduler on app shutdown
+
+    
 
 
 
