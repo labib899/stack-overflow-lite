@@ -1,5 +1,6 @@
 from typing import List, Optional
 from bson import ObjectId
+from fastapi import UploadFile
 from pydantic import BaseModel
 
 
@@ -13,6 +14,7 @@ class Post(BaseModel):
     user_id: str
     code_snippet_url: Optional[str] = None
     # created_at: str
+    # file: Optional[UploadFile] = None
 
 
 class ShowPost(BaseModel):

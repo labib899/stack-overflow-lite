@@ -7,6 +7,8 @@ const CreatePost = () => {
   const [content, setContent] = useState("");
   const [codeSnippet, setCodeSnippet] = useState("");
   const [language, setLanguage] = useState("");
+  const [file, setFile] = useState(null); // For file uploads
+  const [uploadMode, setUploadMode] = useState("none"); // Default to "none"
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const navigate = useNavigate();
@@ -18,27 +20,26 @@ const CreatePost = () => {
 
     try {
       const token = localStorage.getItem("token");
-      const userID = localStorage.getItem("user_id");
-      const postData = {
-        title: title,
-        content: content,
-        codeSnippet: codeSnippet,
-        language: language,
-        user_id: String(userID),
-      };
+      const formData = new FormData();
 
-      if (codeSnippet) {
-        postData.code_snippet = codeSnippet;
+      // Append common fields
+      formData.append("title", title);
+      formData.append("content", content);
+
+      // Append code snippet or file based on selected mode
+      if (uploadMode === "codeSnippet" && codeSnippet) {
+        formData.append("code_snippet", codeSnippet);
+        formData.append("language", language); // Language is required if code snippet is chosen
+      } else if (uploadMode === "file" && file) {
+        formData.append("file", file);
       }
-      const response = await axios.post(
-        "http://localhost:8000/posts",
-        postData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+
+      const response = await axios.post("http://localhost:8000/posts", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
       if (response.status === 200) {
         setSuccess("Post created successfully!");
@@ -46,6 +47,8 @@ const CreatePost = () => {
         setContent("");
         setCodeSnippet("");
         setLanguage("");
+        setFile(null);
+        setUploadMode("none"); // Reset upload mode
         setTimeout(() => navigate("/"), 1500);
       }
     } catch (err) {
@@ -99,35 +102,97 @@ const CreatePost = () => {
             ></textarea>
           </div>
 
-          <div>
-            <label
-              htmlFor="codeSnippet"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Code Snippet (Optional)
+          {/* Radio buttons for upload mode */}
+          <div className="flex flex-col">
+            <span className="block text-sm font-medium text-gray-700 mb-2">
+              Upload Mode (Optional)
+            </span>
+            <label className="flex items-center">
+              <input
+                type="radio"
+                value="none"
+                checked={uploadMode === "none"}
+                onChange={() => setUploadMode("none")}
+                className="mr-2"
+              />
+              None
             </label>
-            <textarea
-              id="codeSnippet"
-              value={codeSnippet}
-              onChange={(e) => setCodeSnippet(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm h-48"
-              rows="4"
-              placeholder="Enter code snippet here (optional)"
-            ></textarea>
+            <label className="flex items-center">
+              <input
+                type="radio"
+                value="codeSnippet"
+                checked={uploadMode === "codeSnippet"}
+                onChange={() => setUploadMode("codeSnippet")}
+                className="mr-2"
+              />
+              Code Snippet
+            </label>
+            <label className="flex items-center">
+              <input
+                type="radio"
+                value="file"
+                checked={uploadMode === "file"}
+                onChange={() => setUploadMode("file")}
+                className="mr-2"
+              />
+              File Upload
+            </label>
           </div>
 
-          {/* Language Dropdown */}
-          <select
-            value={language}
-            onChange={(e) => setLanguage(e.target.value)}
-          >
-            <option value="">Select Language</option>
-            <option value="Python">Python</option>
-            <option value="Javascript">JavaScript</option>
-            <option value="C++">C++</option>
-            <option value="C">C</option>
-            <option value="Java">Java</option>
-          </select>
+          {uploadMode === "codeSnippet" && (
+            <>
+              <div>
+                <label
+                  htmlFor="codeSnippet"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Code Snippet
+                </label>
+                <textarea
+                  id="codeSnippet"
+                  value={codeSnippet}
+                  onChange={(e) => setCodeSnippet(e.target.value)}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm h-48"
+                  rows="4"
+                  placeholder="Enter code snippet here (optional)"
+                  required
+                ></textarea>
+              </div>
+
+              {/* Language Dropdown */}
+              <select
+                value={language}
+                onChange={(e) => setLanguage(e.target.value)}
+                className="mt-1 block w-full border border-gray-300 rounded-md"
+                required={uploadMode === "codeSnippet"} // Language is required if codeSnippet is selected
+              >
+                <option value="">Select Language</option>
+                <option value="Python">Python</option>
+                <option value="Javascript">JavaScript</option>
+                <option value="C++">C++</option>
+                <option value="C">C</option>
+                <option value="Java">Java</option>
+              </select>
+            </>
+          )}
+
+          {uploadMode === "file" && (
+            <div>
+              <label
+                htmlFor="file"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Upload File
+              </label>
+              <input
+                type="file"
+                id="file"
+                onChange={(e) => setFile(e.target.files[0])}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md"
+                required
+              />
+            </div>
+          )}
 
           <button
             type="submit"
