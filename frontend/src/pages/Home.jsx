@@ -37,8 +37,8 @@ const Home = () => {
                 post.code_snippet_content = "Failed to load code snippet.";
               }
             }
-
-            // Fetch author details
+            
+            // author details
             try {
               const userResponse = await axios.get(
                 `http://localhost:8000/users/${post.user_id}`,

@@ -25,27 +25,27 @@ language_extension_map = {
 
 
 @router.post('/posts')
-async def create_post(
-    title: str = Form(...),
-    content: str = Form(...),
-    language: Optional[str] = Form(None),
-    code_snippet: Optional[str] = Form(None),
-    file: Optional[UploadFile] = None,
-    current_user: User = Depends(oauth2.get_current_user)
-):
+async def create_post(title: str = Form(...),
+                    content: str = Form(...),
+                    language: Optional[str] = Form(None),
+                    code_snippet: Optional[str] = Form(None),
+                    file: Optional[UploadFile] = None,
+                    current_user: User = Depends(oauth2.get_current_user)
+                    ):
+    
     post_data = {"title": title, "content": content}
     post_data['user_id'] = current_user['_id']
     if language:
         post_data['language'] = language
+
     result = db.posts.insert_one(post_data)
     post_id = result.inserted_id
 
-    # Set the extension for the file based on the programming language or uploaded file
+    
     extension = language_extension_map.get(language, "txt")
     snippet_filename = f"snippets/{post_id}.{extension}"
 
 
-    # Code snippet upload
     if code_snippet:
         snippet_data = code_snippet.encode('utf-8')
         minio_client.put_object(
@@ -60,30 +60,23 @@ async def create_post(
 
 
 
-    # File upload if provided
     if file:
-        # Read file content
         file_content = await file.read()
-        file_filename = f"snippets/{post_id}.{file.filename.split('.')[-1]}"  # Change as needed for file naming
+        file_filename = f"snippets/{post_id}.{file.filename.split('.')[-1]}"  
 
-        # Upload to MinIO
         minio_client.put_object(
             BUCKET_NAME,
             file_filename,
             io.BytesIO(file_content),
             length=len(file_content),
-            content_type=file.content_type or "text/plain"  # Default to text/plain
+            content_type=file.content_type or "text/plain"
         )
 
-        # Create the MinIO URL for the uploaded file
         minio_url = f"http://localhost:9000/{BUCKET_NAME}/{file_filename}"
-
-        # Update the post in the database with the MinIO URL
         db.posts.update_one({'_id': post_id}, {'$set': {'code_snippet_url': minio_url}})
 
 
 
-    # Create a notification after post creation
     notification_data = {
         'user_id': str(current_user['_id']),
         'post_id': str(post_id),

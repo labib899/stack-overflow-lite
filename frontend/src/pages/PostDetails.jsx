@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
+
 const PostDetails = () => {
   const { id } = useParams();  
   const [post, setPost] = useState(null);
   const [codeSnippet, setCodeSnippet] = useState('');  
   const [poster, setPoster] = useState(null);
   const [error, setError] = useState('');
+
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -30,14 +32,13 @@ const PostDetails = () => {
         setPoster(userResponse.data); 
 
 
-        // If code snippet URL exists, fetch the snippet content from MinIO
         if (response.data.code_snippet_url) {
           const snippetResponse = await axios.get(response.data.code_snippet_url, {
             headers: {
               Authorization: `Bearer ${token}`
             }
           });
-          console.log(snippetResponse)
+          console.log(snippetResponse);
           setCodeSnippet(snippetResponse.data); 
         }
       } catch (err) {

@@ -35,14 +35,14 @@ app.include_router(notification.router)
 
 
 
-# Start the scheduler when the app starts
 @app.on_event("startup")
 def start_scheduler():
-    scheduler.start()  # Start the scheduler
+    scheduler.start() 
+
 
 @app.on_event("shutdown")
 def shutdown_event():
-    scheduler.shutdown()  # Shutdown the scheduler on app shutdown
+    scheduler.shutdown()  
 
     
 

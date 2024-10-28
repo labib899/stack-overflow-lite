@@ -14,6 +14,8 @@ router = APIRouter()
 scheduler = BackgroundScheduler()
 EXPIRATION_TIME = timedelta(days=7)
 
+
+
 def expire_notifications():
     now = datetime.utcnow()
     expired_notifications = db.notifications.find({"expired": False})

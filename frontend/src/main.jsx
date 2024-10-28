@@ -11,12 +11,11 @@ import CreatePost from "./pages/CreatePost";
 import PostDetails from "./pages/PostDetails";
 import ProtectedRoute from "./components/ProtectedRoute";
 
+
 const router = createBrowserRouter([
   {
-    path: "/",
-    element: (
-      <Root />
-    ),
+    path: "/", element: (<Root />),
+    
     children: [
       { path: "/", element: 
           <ProtectedRoute>

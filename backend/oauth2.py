@@ -19,6 +19,5 @@ def get_current_user(token=Depends(oauth2_scheme)):
     if user is None:
         raise credentials_exception  
 
-    # Return the user (you may need to convert MongoDB document to an appropriate User model)
     return user
     

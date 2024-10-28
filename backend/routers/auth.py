@@ -22,7 +22,6 @@ def signin(request:OAuth2PasswordRequestForm=Depends()):
 
     access_token = create_access_token(data={"sub": user['email']})
 
-    # return Token(access_token=access_token, token_type="bearer")
     return {
         "access_token": access_token,
         "token_type": "bearer",

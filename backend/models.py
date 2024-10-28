@@ -13,8 +13,6 @@ class Post(BaseModel):
     language: Optional[str] = None 
     user_id: str
     code_snippet_url: Optional[str] = None
-    # created_at: str
-    # file: Optional[UploadFile] = None
 
 
 class ShowPost(BaseModel):
@@ -25,7 +23,6 @@ class ShowPost(BaseModel):
     language: Optional[str] = None 
     user_id: str
     code_snippet_url: Optional[str] = None
-    # created_at: str
 
 
 

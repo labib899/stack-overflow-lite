@@ -73,7 +73,7 @@ const NavBar = () => {
     navigate("/signin");
   };
 
-  // Fetch notifications and open the modal
+  // fetch notifications and open the modal
   const handleNotifications = () => {
     setHasNewNotifications(false);
     document.getElementById("my_modal_2").showModal();
@@ -92,7 +92,7 @@ const NavBar = () => {
         }
       );
 
-      // Update notifications state to mark the notification as read
+      // update notifications state to mark the notification as read
       setNotifications((prevNotifications) =>
         prevNotifications.map((notif) =>
           notif.id === notification.id
@@ -101,7 +101,7 @@ const NavBar = () => {
         )
       );
 
-      // Navigate to the post after marking as read
+      // navigate to the post after marking as read
       navigate(`/post-details/${notification.post_id}`);
     } catch (error) {
       console.error("Error marking notification as read:", error);
