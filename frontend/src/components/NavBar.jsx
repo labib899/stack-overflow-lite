@@ -6,6 +6,8 @@ import { FaRegBell } from "react-icons/fa";
 import { FaSignOutAlt } from "react-icons/fa";
 import { FaHome } from "react-icons/fa";
 
+const baseURL = import.meta.env.VITE_BASE_URL;
+
 const NavBar = () => {
   const [notifications, setNotifications] = useState([]);
   const [hasNewNotifications, setHasNewNotifications] = useState(false);
@@ -29,7 +31,7 @@ const NavBar = () => {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.get(
-          "http://localhost:8000/notifications",
+          `${baseURL}/notifications`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -83,7 +85,7 @@ const NavBar = () => {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `http://localhost:8000/notifications/${notification.id}/mark-as-read`,
+        `${baseURL}/notifications/${notification.id}/mark-as-read`,
         { userId: currentUserId },
         {
           headers: {

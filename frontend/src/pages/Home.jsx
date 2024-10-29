@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
+const baseURL = import.meta.env.VITE_BASE_URL;
+
 const Home = () => {
   const [posts, setPosts] = useState([]);
   const [error, setError] = useState("");
@@ -16,7 +18,7 @@ const Home = () => {
     const fetchPosts = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get("http://localhost:8000/posts", {
+        const response = await axios.get(`${baseURL}/posts`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -41,7 +43,7 @@ const Home = () => {
             // author details
             try {
               const userResponse = await axios.get(
-                `http://localhost:8000/users/${post.user_id}`,
+                `${baseURL}/users/${post.user_id}`,
                 {
                   headers: {
                     Authorization: `Bearer ${token}`,

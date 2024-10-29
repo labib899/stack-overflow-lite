@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
+const baseURL = import.meta.env.VITE_BASE_URL;
+
 const CreatePost = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -34,7 +36,7 @@ const CreatePost = () => {
         formData.append("file", file);
       }
 
-      const response = await axios.post("http://localhost:8000/posts", formData, {
+      const response = await axios.post(`${baseURL}/posts`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",

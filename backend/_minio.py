@@ -1,10 +1,14 @@
 from minio import Minio
+from dotenv import load_dotenv
+import os
 
+# Load environment variables
+load_dotenv()
 
-MINIO_URL = "localhost:9000"
-MINIO_ACCESS_KEY = "minioadmin"
-MINIO_SECRET_KEY = "minioadmin"
-BUCKET_NAME = "test-bucket"
+MINIO_URL = os.getenv("MINIO_URL")
+MINIO_ACCESS_KEY = os.getenv("MINIO_ACCESS_KEY")
+MINIO_SECRET_KEY = os.getenv("MINIO_SECRET_KEY")
+BUCKET_NAME = os.getenv("BUCKET_NAME")
 
 
 minio_client = Minio(

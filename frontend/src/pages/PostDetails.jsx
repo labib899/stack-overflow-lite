@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
+const baseURL = import.meta.env.VITE_BASE_URL;
+
 
 const PostDetails = () => {
   const { id } = useParams();  
@@ -15,7 +17,7 @@ const PostDetails = () => {
     const fetchPost = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get(`http://localhost:8000/posts/${id}`, {
+        const response = await axios.get(`${baseURL}/posts/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -24,7 +26,7 @@ const PostDetails = () => {
         console.log(response.data);
 
 
-        const userResponse = await axios.get(`http://localhost:8000/users/${response.data.user_id}`, {
+        const userResponse = await axios.get(`${baseURL}/users/${response.data.user_id}`, {
           headers: {
             Authorization: `Bearer ${token}`
           }

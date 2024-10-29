@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
+const baseURL = import.meta.env.VITE_BASE_URL;
+
 const SignUp = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -14,7 +16,7 @@ const SignUp = () => {
             return;
         }
 
-        const response = await fetch('http://localhost:8000/users', {
+        const response = await fetch(`${baseURL}/users`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
