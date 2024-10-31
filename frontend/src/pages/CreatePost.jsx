@@ -9,8 +9,8 @@ const CreatePost = () => {
   const [content, setContent] = useState("");
   const [codeSnippet, setCodeSnippet] = useState("");
   const [language, setLanguage] = useState("");
-  const [file, setFile] = useState(null); // For file uploads
-  const [uploadMode, setUploadMode] = useState("none"); // Default to "none"
+  const [file, setFile] = useState(null); 
+  const [uploadMode, setUploadMode] = useState("none"); 
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const navigate = useNavigate();
@@ -31,7 +31,7 @@ const CreatePost = () => {
       // Append code snippet or file based on selected mode
       if (uploadMode === "codeSnippet" && codeSnippet) {
         formData.append("code_snippet", codeSnippet);
-        formData.append("language", language); // Language is required if code snippet is chosen
+        formData.append("language", language); 
       } else if (uploadMode === "file" && file) {
         formData.append("file", file);
       }
@@ -44,13 +44,23 @@ const CreatePost = () => {
       });
 
       if (response.status === 200) {
+        const postId = response.data.post_id;
+        console.log(postId);
+        // creating notification
+        await axios.post(
+          `${baseURL}/notifications/${postId}`,
+          { post_id: postId },
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
         setSuccess("Post created successfully!");
         setTitle("");
         setContent("");
         setCodeSnippet("");
         setLanguage("");
         setFile(null);
-        setUploadMode("none"); // Reset upload mode
+        setUploadMode("none");
         setTimeout(() => navigate("/"), 1500);
       }
     } catch (err) {

@@ -30,26 +30,22 @@ const NavBar = () => {
     const fetchNotifications = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get(
-          `${baseURL}/notifications`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await axios.get(`${baseURL}/notifications`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         if (response.data.length > 0) {
-          const newLastNotificationId =
-            response.data[0].id; 
+          const newLastNotificationId = response.data[0].id;
 
           if (
             lastNotificationId.current &&
             newLastNotificationId > lastNotificationId.current
           ) {
-            setHasNewNotifications(true); 
+            setHasNewNotifications(true);
           }
-          lastNotificationId.current = newLastNotificationId; 
+          lastNotificationId.current = newLastNotificationId;
           localStorage.setItem("lastNotificationId", newLastNotificationId);
         }
 
@@ -103,6 +99,9 @@ const NavBar = () => {
         )
       );
 
+      // Close the modal
+      document.getElementById("my_modal_2").close();
+
       // navigate to the post after marking as read
       navigate(`/post-details/${notification.post_id}`);
     } catch (error) {
@@ -153,8 +152,8 @@ const NavBar = () => {
                           onClick={() => handleRedirect(notification)}
                           className={`py-2 border-b ${
                             notification.seen_id.includes(currentUserId)
-                              ? "text-gray-500" 
-                              : "font-semibold text-black" 
+                              ? "text-gray-500"
+                              : "font-semibold text-black"
                           }`}
                         >
                           <p>{notification.message}</p>

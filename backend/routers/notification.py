@@ -1,6 +1,6 @@
 from typing import List
 from bson import ObjectId
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Body, Depends, Form, HTTPException, status
 from datetime import datetime
 
 from database import db
@@ -8,21 +8,34 @@ from models import Notification, ShowNotification, User
 import oauth2
 
 
+
 router=APIRouter(tags=['Notifications'])
 
 
 
-@router.post("/notifications")
-def create_notification(notification: Notification,current_user: User = Depends(oauth2.get_current_user)):
-    notification_data = {
-        "user_id": notification.user_id,
-        "message": notification.message,
-        "post_id": notification.post_id,
-        "created_at": datetime.utcnow().isoformat()  
-    }
-    result = db.notifications.insert_one(notification_data)
 
-    return {"message": "Notification created successfully", "id": str(result.inserted_id)}
+@router.post('/notifications/{post_id}')
+async def create_notification(post_id: str, current_user: User = Depends(oauth2.get_current_user)):
+
+    if not ObjectId.is_valid(post_id):
+        raise HTTPException(status_code=400, detail="Invalid post ID format")
+    
+    post = db.posts.find_one({'_id': ObjectId(post_id)})
+    if not post:
+        raise HTTPException(status_code=404, detail="Post not found")
+
+    notification_data = {
+        'user_id': str(current_user['_id']),
+        'post_id': str(post_id),
+        'message': f"{current_user['email']} posted: {post['title']}",
+        'created_at': datetime.utcnow().isoformat(),
+        'seen_id': [],
+        'expired': False
+    }
+    notification_result = db.notifications.insert_one(notification_data)
+    db.notifications.update_one({'_id': notification_result.inserted_id}, {'$set': {'id': str(notification_result.inserted_id)}})
+
+    return {"notification_id": str(notification_result.inserted_id)}
    
 
 

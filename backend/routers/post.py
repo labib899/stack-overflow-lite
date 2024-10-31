@@ -40,14 +40,13 @@ async def create_post(title: str = Form(...),
 
     result = db.posts.insert_one(post_data)
     post_id = result.inserted_id
-
+    db.posts.update_one({'_id': post_id}, {'$set': {'id': str(post_id)}})
     
     extension = language_extension_map.get(language, "txt")
     snippet_filename = f"snippets/{post_id}.{extension}"
-
-
     if code_snippet:
         snippet_data = code_snippet.encode('utf-8')
+
         minio_client.put_object(
             BUCKET_NAME, 
             snippet_filename, 
@@ -55,6 +54,7 @@ async def create_post(title: str = Form(...),
             length=len(snippet_data), 
             content_type="text/plain"
         )
+
         minio_url = f"http://localhost:9000/{BUCKET_NAME}/{snippet_filename}"
         db.posts.update_one({'_id': post_id}, {'$set': {'code_snippet_url': minio_url}})
 
@@ -73,22 +73,10 @@ async def create_post(title: str = Form(...),
         )
 
         minio_url = f"http://localhost:9000/{BUCKET_NAME}/{file_filename}"
-        db.posts.update_one({'_id': post_id}, {'$set': {'code_snippet_url': minio_url}})
+        result = db.posts.update_one({'_id': post_id}, {'$set': {'code_snippet_url': minio_url}})
 
 
-
-    notification_data = {
-        'user_id': str(current_user['_id']),
-        'post_id': str(post_id),
-        'message': f"{current_user['email']} posted: {title}",
-        'created_at': datetime.utcnow().isoformat(),
-        'seen_id': [],
-        'expired': False
-    }
-    notification_result = db.notifications.insert_one(notification_data)
-    db.notifications.update_one({'_id': notification_result.inserted_id}, {'$set': {'id': str(notification_result.inserted_id)}})
-
-    return {"post_id": str(post_id)}
+    return {'post_id': str(post_id)}
 
 
 
