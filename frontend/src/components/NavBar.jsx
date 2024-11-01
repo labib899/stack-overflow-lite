@@ -17,6 +17,7 @@ const NavBar = () => {
 
   const [userEmail, setUserEmail] = useState("");
   const [currentUserId, setCurrentUserId] = useState("");
+  const modalRef = useRef(null); // Create a ref for the modal
 
   useEffect(() => {
     const storedUserEmail = localStorage.getItem("userEmail");
@@ -113,6 +114,20 @@ const NavBar = () => {
     navigate("/");
   };
 
+  // Handle clicks outside the modal
+  const handleClickOutside = (event) => {
+    if (modalRef.current && !modalRef.current.contains(event.target)) {
+      document.getElementById("my_modal_2").close();
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <nav className="bg-white shadow-md py-4 px-6 mb-8 flex justify-between items-center">
       <div className="text-xl font-semibold text-gray-800">
@@ -137,39 +152,41 @@ const NavBar = () => {
         </div>
 
         {/* Modal for Notifications */}
-        <dialog id="my_modal_2" className="modal">
-          <div className="modal-box">
-            <h3 className="font-bold text-lg">Notifications</h3>
-            <div className="py-4">
+        <dialog id="my_modal_2" className="modal fixed inset-0 bg-black/50 flex justify-center items-center backdrop-blur-sm">
+          <div ref={modalRef} className="modal-box rounded-lg shadow-xl bg-white max-w-md p-6">
+            <h3 className="font-bold text-xl mb-4 text-gray-800 border-b pb-2">Notifications</h3>
+            <div className="space-y-4">
               {error ? (
                 <p className="text-red-500">{error}</p>
               ) : (
-                <ul>
+                <ul className="space-y-2">
                   {notifications.length > 0 ? (
                     notifications.map((notification) => (
                       <li key={notification.id}>
                         <button
                           onClick={() => handleRedirect(notification)}
-                          className={`py-2 border-b ${
+                          className={`flex items-start space-x-3 py-3 px-4 rounded-md transition-all hover:bg-gray-100 ${
                             notification.seen_id.includes(currentUserId)
                               ? "text-gray-500"
-                              : "font-semibold text-black"
+                              : "text-gray-900 font-semibold bg-gray-50"
                           }`}
                         >
-                          <p>{notification.message}</p>
+                          <span className="block truncate">{notification.message}</span>
                         </button>
                       </li>
                     ))
                   ) : (
-                    <p>No notifications to display</p>
+                    <p className="text-gray-600">No notifications to display</p>
                   )}
                 </ul>
               )}
             </div>
+            <div className="mt-6 text-right">
+              <form method="dialog">
+                <button className="text-blue-500 hover:text-blue-700 transition">Close</button>
+              </form>
+            </div>
           </div>
-          <form method="dialog" className="modal-backdrop">
-            <button>Close</button>
-          </form>
         </dialog>
 
         <button
