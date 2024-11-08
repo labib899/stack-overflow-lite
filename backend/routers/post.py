@@ -6,12 +6,13 @@ from fastapi import APIRouter, Form, HTTPException, Depends, UploadFile
 from models import Post, ShowPost, User, Notification
 from database import db
 import oauth2
-from _minio import minio_client, BUCKET_NAME
+from _minio import minio_client, BUCKET_NAME, MINIO_URL
+
+
+minio_URL = "http://localhost:9000"
 
 
 router = APIRouter(tags=['Posts'])
-
-
 
 
 language_extension_map = {
@@ -55,7 +56,7 @@ async def create_post(title: str = Form(...),
             content_type="text/plain"
         )
 
-        minio_url = f"http://localhost:9000/{BUCKET_NAME}/{snippet_filename}"
+        minio_url = f"{minio_URL}/{BUCKET_NAME}/{snippet_filename}"
         db.posts.update_one({'_id': post_id}, {'$set': {'code_snippet_url': minio_url}})
 
 
@@ -72,7 +73,7 @@ async def create_post(title: str = Form(...),
             content_type=file.content_type or "text/plain"
         )
 
-        minio_url = f"http://localhost:9000/{BUCKET_NAME}/{file_filename}"
+        minio_url = f"{minio_URL}/{BUCKET_NAME}/{file_filename}"
         result = db.posts.update_one({'_id': post_id}, {'$set': {'code_snippet_url': minio_url}})
 
 
