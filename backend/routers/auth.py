@@ -11,7 +11,7 @@ from database import db
 router=APIRouter(tags=['Authentication'])
 
 
-@router.post('/signin')
+@router.post('/api/signin')
 def signin(request:OAuth2PasswordRequestForm=Depends()):
     user=db.users.find_one({"email": request.username})
     if user is None:

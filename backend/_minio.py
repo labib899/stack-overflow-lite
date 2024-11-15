@@ -1,3 +1,4 @@
+from email.policy import Policy
 from minio import Minio
 from dotenv import load_dotenv
 import os
@@ -21,3 +22,4 @@ minio_client = Minio(
 
 if not minio_client.bucket_exists(BUCKET_NAME):
     minio_client.make_bucket(BUCKET_NAME)
+    minio_client.set_bucket_policy(BUCKET_NAME, Policy.READ_ONLY)

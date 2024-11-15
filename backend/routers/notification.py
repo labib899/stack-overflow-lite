@@ -14,7 +14,7 @@ router=APIRouter(tags=['Notifications'])
 
 
 
-@router.post('/notifications/{post_id}')
+@router.post('/api/notifications/{post_id}')
 async def create_notification(post_id: str, current_user: User = Depends(oauth2.get_current_user)):
 
     if not ObjectId.is_valid(post_id):
@@ -42,7 +42,7 @@ async def create_notification(post_id: str, current_user: User = Depends(oauth2.
 
 
 
-@router.get('/notifications', response_model=List[ShowNotification])
+@router.get('/api/notifications', response_model=List[ShowNotification])
 def get_notifications(current_user: User = Depends(oauth2.get_current_user)):
     user_id_str = str(current_user["_id"])
     
@@ -63,7 +63,7 @@ def get_notifications(current_user: User = Depends(oauth2.get_current_user)):
 
 
 
-@router.put('/notifications/{notification_id}/mark-as-read')
+@router.put('/api/notifications/{notification_id}/mark-as-read')
 def mark_as_read(notification_id, current_user: User = Depends(oauth2.get_current_user)):
     user_id_str = str(current_user["_id"])
 
