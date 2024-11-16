@@ -4,21 +4,28 @@ from fastapi import APIRouter, HTTPException
 from hashing import Hash
 from models import User, ShowUser
 from database import db
+from _token import create_access_token
 
 
 router=APIRouter(tags=['Users'])
 
 
 
-@router.post('/api/users', response_model=ShowUser)
+@router.post('/api/users')
 def signup(user:User):
     if db.users.find_one({"email": user.email}):
         raise HTTPException(status_code=400, detail="User already exists")
     
     user.password=Hash.bcrypt(user.password)
-    db.users.insert_one(user.dict())
+    inserted_user=db.users.insert_one(user.dict())
 
-    return user
+    access_token = create_access_token(data={"sub": user.email})
+
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user_id": str(inserted_user.inserted_id)
+    }
 
 
 

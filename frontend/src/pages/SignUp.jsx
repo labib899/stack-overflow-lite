@@ -28,6 +28,10 @@ const SignUp = () => {
         });
 
         if (response.ok) {
+            const data = await response.json();
+            localStorage.setItem('token', data.access_token);
+            localStorage.setItem('userEmail', email);
+            localStorage.setItem('userId', data.user_id);
             alert('Signed up successfully!');
             navigate('/');
         } else {

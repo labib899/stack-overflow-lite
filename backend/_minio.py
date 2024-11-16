@@ -1,4 +1,4 @@
-from email.policy import Policy
+import json
 from minio import Minio
 from dotenv import load_dotenv
 import os
@@ -22,4 +22,17 @@ minio_client = Minio(
 
 if not minio_client.bucket_exists(BUCKET_NAME):
     minio_client.make_bucket(BUCKET_NAME)
-    minio_client.set_bucket_policy(BUCKET_NAME, Policy.READ_ONLY)
+    
+    public_policy = {
+        "Version": "2012-10-17",
+        "Statement": [
+            {
+                "Effect": "Allow",
+                "Principal": {"AWS": ["*"]},
+                "Action": ["s3:GetObject"],
+                "Resource": [f"arn:aws:s3:::{BUCKET_NAME}/*"]
+            }
+        ]
+    }
+
+    minio_client.set_bucket_policy(BUCKET_NAME, json.dumps(public_policy))
