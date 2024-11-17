@@ -10,38 +10,61 @@ import SignUp from "./pages/SignUp";
 import CreatePost from "./pages/CreatePost";
 import PostDetails from "./pages/PostDetails";
 import ProtectedRoute from "./components/ProtectedRoute";
-
+import AuthenticatedRoute from "./components/AuthenticatedRoute";
 
 const router = createBrowserRouter([
   {
-    path: "/", element: (<Root />),
-    
+    path: "/",
+    element: <Root />,
+
     children: [
-      { path: "/", element: 
+      {
+        path: "/",
+        element: (
           <ProtectedRoute>
             <Home />
           </ProtectedRoute>
+        ),
       },
 
-      { path: "/create-post", element: 
-        <ProtectedRoute>
-          <CreatePost />
-        </ProtectedRoute>
-       },
+      {
+        path: "/create-post",
+        element: (
+          <ProtectedRoute>
+            <CreatePost />
+          </ProtectedRoute>
+        ),
+      },
 
-      { path: "/post-details/:id", element: 
-        <ProtectedRoute>
-          <PostDetails />
-        </ProtectedRoute>
-       },
+      {
+        path: "/post-details/:id",
+        element: (
+          <ProtectedRoute>
+            <PostDetails />
+          </ProtectedRoute>
+        ),
+      },
     ],
   },
 
-  { path: "/signin", element: <SignIn /> },
+  {
+    path: "/signin",
+    element: (
+      <AuthenticatedRoute>
+        <SignIn />
+      </AuthenticatedRoute>
+    ),
+  },
 
-  { path: "/signup", element: <SignUp /> },
+  {
+    path: "/signup",
+    element: (
+      <AuthenticatedRoute>
+        <SignUp />
+      </AuthenticatedRoute>
+    ),
+  },,
 ]);
-
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
