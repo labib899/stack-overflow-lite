@@ -9,6 +9,9 @@ from remover import scheduler
 
 app=FastAPI()
 
+@app.get('/')
+def check():
+    return {'message': 'it is okay'}
 
 
 origins = [
