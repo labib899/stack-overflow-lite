@@ -11,7 +11,7 @@ router=APIRouter(tags=['Users'])
 
 
 
-@router.post('/api/users')
+@router.post('/users')
 def signup(user:User):
     if db.users.find_one({"email": user.email}):
         raise HTTPException(status_code=400, detail="User already exists")
@@ -29,7 +29,7 @@ def signup(user:User):
 
 
 
-@router.get('/api/users/{user_id}', response_model=ShowUser)
+@router.get('/users/{user_id}', response_model=ShowUser)
 def get_user(user_id):
     user = db.users.find_one({"_id": ObjectId(user_id)})
     if not user:

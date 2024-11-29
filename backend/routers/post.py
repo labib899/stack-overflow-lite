@@ -25,7 +25,7 @@ language_extension_map = {
 
 
 
-@router.post('/api/posts')
+@router.post('/posts')
 async def create_post(title: str = Form(...),
                     content: str = Form(...),
                     language: Optional[str] = Form(None),
@@ -84,7 +84,7 @@ async def create_post(title: str = Form(...),
 
 
 
-@router.get('/api/posts/{post_id}',response_model=ShowPost)
+@router.get('/posts/{post_id}',response_model=ShowPost)
 def get_single_post(post_id,current_user: User = Depends(oauth2.get_current_user)):
     if not ObjectId.is_valid(post_id):
         raise HTTPException(status_code=400, detail="Invalid blog id format")
@@ -102,7 +102,7 @@ def get_single_post(post_id,current_user: User = Depends(oauth2.get_current_user
 
 
 
-@router.get('/api/posts', response_model=List[ShowPost])
+@router.get('/posts', response_model=List[ShowPost])
 def get_all_posts(current_user: User = Depends(oauth2.get_current_user)):
     posts = db.posts.find({"user_id": {"$ne": current_user["_id"]}}).sort("_id", -1)
     

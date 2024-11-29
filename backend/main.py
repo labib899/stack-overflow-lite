@@ -6,50 +6,43 @@ from routers import post, user, notification, auth
 from remover import scheduler
 
 
+app = FastAPI()
 
-app=FastAPI()
 
-@app.get('/')
+@app.get("/")
 def check():
-    return {'message': 'it is okay'}
+    return {"message": "it is okay"}
 
 
 origins = [
     "http://localhost:5173",
-    "http://localhost"
+    "http://localhost",
 ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins, 
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 
-
-app.include_router(auth.router)
-app.include_router(user.router)
-app.include_router(post.router)
-app.include_router(notification.router)
-
-
-
+app.include_router(auth.router, prefix="/api")
+app.include_router(user.router, prefix="/api")
+app.include_router(post.router, prefix="/api")
+app.include_router(notification.router, prefix="/api")
 
 
 @app.on_event("startup")
 def start_scheduler():
-    scheduler.start() 
+    scheduler.start()
 
 
 @app.on_event("shutdown")
 def shutdown_event():
-    scheduler.shutdown()  
-
-    
+    scheduler.shutdown()
 
 
-
-if __name__ == '__main__':
-    uvicorn.run('main:app',host='0.0.0.0',reload=True)
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", reload=True)

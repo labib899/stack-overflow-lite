@@ -153,9 +153,17 @@ const NavBar = () => {
         </div>
 
         {/* Modal for Notifications */}
-        <dialog id="my_modal_2" className="modal fixed inset-0 bg-black/50 flex justify-center items-center backdrop-blur-sm">
-          <div ref={modalRef} className="modal-box rounded-lg shadow-xl bg-white max-w-md p-6">
-            <h3 className="font-bold text-xl mb-4 text-gray-800 border-b pb-2">Notifications</h3>
+        <dialog
+          id="my_modal_2"
+          className="modal fixed inset-0 bg-black/50 flex justify-center items-center backdrop-blur-sm"
+        >
+          <div
+            ref={modalRef}
+            className="modal-box rounded-lg shadow-xl bg-white max-w-md p-6"
+          >
+            <h3 className="font-bold text-xl mb-4 text-gray-800 border-b pb-2">
+              Notifications
+            </h3>
             <div className="space-y-4">
               {error ? (
                 <p className="text-red-500">{error}</p>
@@ -172,7 +180,9 @@ const NavBar = () => {
                               : "text-gray-900 font-semibold bg-gray-50"
                           }`}
                         >
-                          <span className="block truncate">{notification.message}</span>
+                          <span className="block truncate">
+                            {notification.message}
+                          </span>
                         </button>
                       </li>
                     ))
@@ -184,7 +194,9 @@ const NavBar = () => {
             </div>
             <div className="mt-6 text-right">
               <form method="dialog">
-                <button className="text-blue-500 hover:text-blue-700 transition">Close</button>
+                <button className="text-blue-500 hover:text-blue-700 transition">
+                  Close
+                </button>
               </form>
             </div>
           </div>
