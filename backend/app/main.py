@@ -2,8 +2,8 @@ from fastapi import FastAPI
 import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
 
-from routers import post, user, notification, auth
-from remover import scheduler
+from routers import post, user, notification
+from notification_scheduler import scheduler
 
 
 app = FastAPI()
@@ -28,7 +28,6 @@ app.add_middleware(
 )
 
 
-app.include_router(auth.router, prefix="/api")
 app.include_router(user.router, prefix="/api")
 app.include_router(post.router, prefix="/api")
 app.include_router(notification.router, prefix="/api")

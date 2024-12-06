@@ -1,12 +1,10 @@
 from datetime import datetime, timezone, timedelta
 import os
-from typing import Optional
 import jwt
 from dotenv import load_dotenv
 
 from models import TokenData
 
-# Load environment variables
 load_dotenv()
 
 SECRET_KEY = os.getenv("SECRET_KEY")
@@ -22,7 +20,7 @@ def create_access_token(data: dict):
     return encoded_jwt
 
 
-def verify_token(token,credentials_exception):
+def verify_token(token, credentials_exception):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         email: str = payload.get("sub")
@@ -31,5 +29,5 @@ def verify_token(token,credentials_exception):
         token_data = TokenData(email=email)
     except jwt.InvalidTokenError:
         raise credentials_exception
-    
+
     return token_data

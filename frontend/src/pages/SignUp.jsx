@@ -1,25 +1,25 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 const baseURL = import.meta.env.VITE_BASE_URL;
 
 const SignUp = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const navigate = useNavigate(); 
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (password !== confirmPassword) {
-            alert('Passwords do not match.');
+            alert("Passwords do not match.");
             return;
         }
 
-        const response = await fetch(`${baseURL}/users`, {
-            method: 'POST',
+        const response = await fetch(`${baseURL}/users/signup`, {
+            method: "POST",
             headers: {
-                'Content-Type': 'application/json',
+                "Content-Type": "application/json",
             },
             body: JSON.stringify({
                 email: email,
@@ -29,20 +29,22 @@ const SignUp = () => {
 
         if (response.ok) {
             const data = await response.json();
-            localStorage.setItem('token', data.access_token);
-            localStorage.setItem('userEmail', email);
-            localStorage.setItem('userId', data.user_id);
-            alert('Signed up successfully!');
-            navigate('/');
+            localStorage.setItem("token", data.access_token);
+            localStorage.setItem("userEmail", email);
+            localStorage.setItem("userId", data.user_id);
+            alert("Signed up successfully!");
+            navigate("/");
         } else {
-            alert('User already exists');
+            alert("User already exists");
         }
     };
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-100">
             <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-                <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">Sign Up</h1>
+                <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">
+                    Sign Up
+                </h1>
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4">
                         <input
@@ -81,8 +83,11 @@ const SignUp = () => {
                         Sign Up
                     </button>
                     <p className="mt-4 text-center">
-                        Already have an account?{' '}
-                        <Link to="/signin" className="text-blue-500 hover:underline">
+                        Already have an account?{" "}
+                        <Link
+                            to="/signin"
+                            className="text-blue-500 hover:underline"
+                        >
                             Sign In
                         </Link>
                     </p>

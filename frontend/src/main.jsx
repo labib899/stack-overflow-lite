@@ -13,61 +13,62 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AuthenticatedRoute from "./components/AuthenticatedRoute";
 
 const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <Root />,
-
-    children: [
-      {
+    {
         path: "/",
+        element: <Root />,
+
+        children: [
+            {
+                path: "/",
+                element: (
+                    <ProtectedRoute>
+                        <Home />
+                    </ProtectedRoute>
+                ),
+            },
+
+            {
+                path: "/create-post",
+                element: (
+                    <ProtectedRoute>
+                        <CreatePost />
+                    </ProtectedRoute>
+                ),
+            },
+
+            {
+                path: "/post-details/:id",
+                element: (
+                    <ProtectedRoute>
+                        <PostDetails />
+                    </ProtectedRoute>
+                ),
+            },
+        ],
+    },
+
+    {
+        path: "/signin",
         element: (
-          <ProtectedRoute>
-            <Home />
-          </ProtectedRoute>
+            <AuthenticatedRoute>
+                <SignIn />
+            </AuthenticatedRoute>
         ),
-      },
+    },
 
-      {
-        path: "/create-post",
+    {
+        path: "/signup",
         element: (
-          <ProtectedRoute>
-            <CreatePost />
-          </ProtectedRoute>
+            <AuthenticatedRoute>
+                <SignUp />
+            </AuthenticatedRoute>
         ),
-      },
-
-      {
-        path: "/post-details/:id",
-        element: (
-          <ProtectedRoute>
-            <PostDetails />
-          </ProtectedRoute>
-        ),
-      },
-    ],
-  },
-
-  {
-    path: "/signin",
-    element: (
-      <AuthenticatedRoute>
-        <SignIn />
-      </AuthenticatedRoute>
-    ),
-  },
-
-  {
-    path: "/signup",
-    element: (
-      <AuthenticatedRoute>
-        <SignUp />
-      </AuthenticatedRoute>
-    ),
-  },,
+    },
+    ,
 ]);
 
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <RouterProvider router={router} />
-  </StrictMode>
+    <StrictMode>
+        <RouterProvider router={router} />
+    </StrictMode>
 );

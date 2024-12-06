@@ -13,16 +13,13 @@ BUCKET_NAME = os.getenv("BUCKET_NAME")
 
 
 minio_client = Minio(
-    MINIO_URL,
-    access_key=MINIO_ROOT_USER,
-    secret_key=MINIO_ROOT_PASSWORD,
-    secure=False 
+    MINIO_URL, access_key=MINIO_ROOT_USER, secret_key=MINIO_ROOT_PASSWORD, secure=False
 )
 
 
 if not minio_client.bucket_exists(BUCKET_NAME):
     minio_client.make_bucket(BUCKET_NAME)
-    
+
     public_policy = {
         "Version": "2012-10-17",
         "Statement": [
@@ -30,9 +27,9 @@ if not minio_client.bucket_exists(BUCKET_NAME):
                 "Effect": "Allow",
                 "Principal": {"AWS": ["*"]},
                 "Action": ["s3:GetObject"],
-                "Resource": [f"arn:aws:s3:::{BUCKET_NAME}/*"]
+                "Resource": [f"arn:aws:s3:::{BUCKET_NAME}/*"],
             }
-        ]
+        ],
     }
 
     minio_client.set_bucket_policy(BUCKET_NAME, json.dumps(public_policy))
