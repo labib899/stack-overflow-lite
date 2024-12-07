@@ -2,14 +2,18 @@ from datetime import datetime, timezone, timedelta
 import os
 import jwt
 from dotenv import load_dotenv
-
-from models import TokenData
+from pydantic import BaseModel
+from typing import Optional
 
 load_dotenv()
 
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
+
+
+class TokenData(BaseModel):
+    email: Optional[str] = None
 
 
 def create_access_token(data: dict):

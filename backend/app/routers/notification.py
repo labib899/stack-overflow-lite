@@ -5,7 +5,7 @@ from datetime import datetime
 
 from database import db
 from models import Notification, User
-import oauth2 as oauth2
+import oauth2
 
 
 router = APIRouter(tags=["Notifications"])

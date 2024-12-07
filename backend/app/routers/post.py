@@ -6,8 +6,8 @@ from fastapi import APIRouter, Form, HTTPException, Depends, UploadFile
 
 from models import User, Post
 from database import db
-import oauth2 as oauth2
-from minio_services import minio_client, BUCKET_NAME
+import oauth2
+from minio_storage import minio_client, BUCKET_NAME
 
 
 minio_URL = "http://localhost:9000"

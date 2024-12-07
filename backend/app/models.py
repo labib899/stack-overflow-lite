@@ -25,7 +25,3 @@ class Notification(BaseModel):
     user_id: str
     seen_id: List[str] = []
     expired: bool = False
-
-
-class TokenData(BaseModel):
-    email: Optional[str] = None

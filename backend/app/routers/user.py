@@ -5,7 +5,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from hashing import Hash
 from models import User
 from database import db
-from auth_token import create_access_token
+from token_handler import create_access_token
 
 
 router = APIRouter(tags=["Users"])
