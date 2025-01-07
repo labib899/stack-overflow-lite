@@ -2,8 +2,7 @@ from fastapi import FastAPI
 import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
 
-from routers import post, user, notification
-from notification_scheduler import scheduler
+import user
 
 
 app = FastAPI()
@@ -29,19 +28,7 @@ app.add_middleware(
 
 
 app.include_router(user.router, prefix="/api")
-app.include_router(post.router, prefix="/api")
-app.include_router(notification.router, prefix="/api")
-
-
-@app.on_event("startup")
-def start_scheduler():
-    scheduler.start()
-
-
-@app.on_event("shutdown")
-def shutdown_event():
-    scheduler.shutdown()
 
 
 if __name__ == "__main__":
-    uvicorn.run("main:app", host="0.0.0.0", reload=True)
+    uvicorn.run("server:app", host="0.0.0.0", port=8001, reload=True)

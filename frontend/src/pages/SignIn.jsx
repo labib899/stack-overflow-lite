@@ -29,7 +29,7 @@ const SignIn = () => {
             alert("Signed in successfully!");
             navigate("/");
         } else {
-            alert("Sign-in failed. Please check your credentials.");
+            alert("Sign-in failed!");
         }
     };
 

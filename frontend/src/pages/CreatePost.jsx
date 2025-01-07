@@ -45,7 +45,6 @@ const CreatePost = () => {
 
             if (response.status === 200) {
                 const postId = response.data.post_id;
-                console.log(postId);
                 // creating notification
                 await axios.post(
                     `${baseURL}/notifications/${postId}`,

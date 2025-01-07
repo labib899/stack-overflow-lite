@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from apscheduler.schedulers.background import BackgroundScheduler
 
 
-from database import db
+from common.database import db
 
 
 router = APIRouter()

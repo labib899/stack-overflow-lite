@@ -3,9 +3,9 @@ from fastapi import APIRouter, HTTPException, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 
 from hashing import Hash
-from models import User
-from database import db
-from token_handler import create_access_token
+from common.models import User
+from common.database import db
+from common.auth.token_handler import create_access_token
 
 
 router = APIRouter(tags=["Users"])
@@ -20,7 +20,7 @@ def signin(request: OAuth2PasswordRequestForm = Depends()):
     if not Hash.verify(user["password"], request.password):
         raise HTTPException(status_code=400, detail="Invalid credentials")
 
-    access_token = create_access_token(data={"sub": user["email"]})
+    access_token = create_access_token(data={"sub": user["email"], "user_id": str(user["_id"])})
 
     return {
         "access_token": access_token,
@@ -37,7 +37,7 @@ def signup(user: User):
     user.password = Hash.bcrypt(user.password)
     inserted_user = db.users.insert_one(user.dict())
 
-    access_token = create_access_token(data={"sub": user.email})
+    access_token = create_access_token(data={"sub": user.email, "user_id": str(inserted_user.inserted_id)})
 
     return {
         "access_token": access_token,

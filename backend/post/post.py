@@ -4,9 +4,9 @@ from typing import List, Optional
 from bson import ObjectId
 from fastapi import APIRouter, Form, HTTPException, Depends, UploadFile
 
-from models import User, Post
-from database import db
-import oauth2
+from common.models import User, Post
+from common.database import db
+from common.auth.oauth2 import get_current_user
 from minio_storage import minio_client, BUCKET_NAME
 
 
@@ -24,8 +24,8 @@ router = APIRouter(tags=["Posts"])
 
 
 @router.get("/posts", response_model=List[Post])
-def get_all_posts(current_user: User = Depends(oauth2.get_current_user)):
-    posts = db.posts.find({"user_id": {"$ne": current_user["_id"]}}).sort("_id", -1)
+def get_all_posts(current_user = Depends(get_current_user)):
+    posts = db.posts.find({"user_id": {"$ne": current_user["user_id"]}}).sort("_id", -1)
 
     posts_list = []
     for post in posts:
@@ -37,7 +37,7 @@ def get_all_posts(current_user: User = Depends(oauth2.get_current_user)):
 
 
 @router.get("/posts/{post_id}", response_model=Post)
-def get_single_post(post_id, current_user: User = Depends(oauth2.get_current_user)):
+def get_single_post(post_id, current_user = Depends(get_current_user)):
     if not ObjectId.is_valid(post_id):
         raise HTTPException(status_code=400, detail="Invalid blog id format")
 
@@ -58,11 +58,11 @@ async def create_post(
     language: Optional[str] = Form(None),
     code_snippet: Optional[str] = Form(None),
     file: Optional[UploadFile] = None,
-    current_user: User = Depends(oauth2.get_current_user),
+    current_user = Depends(get_current_user),
 ):
 
     post_data = {"title": title, "content": content}
-    post_data["user_id"] = current_user["_id"]
+    post_data["user_id"] = current_user["user_id"]
     if language:
         post_data["language"] = language
 

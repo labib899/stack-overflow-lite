@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+pymongo
+passlib[bcrypt]
+python-jose
+apscheduler
+python-multipart
+pyjwt
+minio
+APScheduler
+python-dotenv
