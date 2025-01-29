@@ -5,6 +5,10 @@ services:
             - 80:80
         volumes:
             - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+        depends_on:
+            - user_service
+            - post_service
+            - notification_service
 
     minio:
         image: minio/minio
@@ -14,6 +18,9 @@ services:
             - 9001:9001
         volumes:
             - minio_data:/data
+        # environment:
+        #     MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+        #     MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
 
     mongodb_user:
         image: mongo:latest
@@ -45,17 +52,23 @@ services:
         build: ./backend/user
         ports:
             - 8001:8001
+        depends_on:
+            - mongodb_user
 
     post_service:
         build: ./backend/post
         ports:
             - 8002:8002
+        depends_on:
+            - mongodb_post
 
     notification_service:
         build: ./backend/notification
         ports:
             - 8003:8003
-
+        depends_on:
+            - mongodb_notification
+            - post_service
 volumes:
     minio_data:
     mongo_user_data:
